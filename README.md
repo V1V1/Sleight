@@ -25,6 +25,7 @@ Sleight can be used in 3 ways:
 
 ##### HTTPS Redirector Setup Notes:
 * Certificate generation will only work once your redirector's domain has propagated successfully.
+* You'll need DNS entries for both DOMAIN.com and www<nolink>.<nolink>DOMAIN.com for your redirector's domain.
 * You can use the default HTTPS certificates Empire comes with (located in the '/empire/data/' directory) for the 'CertPath' property when starting a HTTPS listener on your C2 server.
 
 ##### HTTPS Redirectors reference:
