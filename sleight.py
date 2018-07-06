@@ -91,7 +91,6 @@ def shutdown():
 
 def convert_profile():
     # Get LHOST, LPORT and redirect site
-    print args.ip
     if args.ip:
 	# Get LHOST, LPORT and redirect site
  		LHOST = args.ip
