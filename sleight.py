@@ -91,6 +91,7 @@ def shutdown():
 
 def convert_profile():
     # Get LHOST, LPORT and redirect site
+    print args.ip
     if args.ip:
 	# Get LHOST, LPORT and redirect site
  		LHOST = args.ip
@@ -338,14 +339,19 @@ if __name__ == "__main__":
 	try:
 		rules = convert_profile()
 		
-		configure = args.proceed
-
-		if configure == 'y':
-			get_apache()
-			mod_rewrite_config(rules)
-			write_rules(rules)			
-		else:
-			sys.exit((R + '[!]' + W + ' Exiting. Redirector' +
+        if args.proceed:
+            configure = args.proceed
+        else:
+            configure = raw_input(
+                (G + '[+]' + W + ' Proceed with redirector setup?' +
+                    ' [y/N] ')
+                )
+        if configure == 'y':
+            get_apache()
+            mod_rewrite_config(rules)
+            write_rules(rules)			
+        else:
+            sys.exit((R + '[!]' + W + ' Exiting. Redirector' +
 				' not configured.'))
 
 		print LG + '[!] Setup complete!' + W
