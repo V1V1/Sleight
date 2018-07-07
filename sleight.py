@@ -3,7 +3,7 @@
 
 ############################################################################################
 # sleight.py:   Empire HTTP(S) C2 redirector setup script
-# Author:   VIVI | <Blog: thevivi.net> | <Twitter: @_theVIVI> | <Email: gabriel@thevivi.net> 
+# Author:   VIVI | <Blog: thevivi.net> | <Twitter: @_theVIVI> | <Email: gabriel@thevivi.net>
 ############################################################################################
 
 import subprocess
@@ -35,48 +35,48 @@ def parse_args():
 
     parser.add_argument(
         '-c',
-        '--commProfile',    
+        '--commProfile',
         help='Path to Empire Communication Profile',
         required=True
     )
 
     parser.add_argument(
         '-r',
-        '--redirectDomain',    
+        '--redirectDomain',
         help='Domain bad traffic will be redirected to.',
         required=True
     )
 
     parser.add_argument(
         '-p',
-        '--port',    
+        '--port',
         help='Port that the remote C2 is listening on',
         required=False
     )
 
     parser.add_argument(
         '-i',
-        '--ip',    
+        '--ip',
         help='IP Address of the remote C2 listener',
         required=False
     )
 
     parser.add_argument(
         '-m',
-        '--modeHTTPS',    
+        '--modeHTTPS',
         help='HTTPS Listener for redirector? [y/N]',
         required=False
     )
 
     parser.add_argument(
         '-t',
-        '--myDomain',    
+        '--myDomain',
         help='Domain name for redirector',
         required=False
     )
     parser.add_argument(
         '-q',
-        '--proceed',    
+        '--proceed',
         help='Proceed with configuration of HTTPS Redirector and Cert Deployment [y/N]',
         required=False
     )
@@ -100,7 +100,7 @@ def convert_profile():
         '\n' + G + '[+]' + W + ' Empire C2 LHOST: ')
         while LHOST == '':
             LHOST = raw_input("[-] Empire C2 LHOST: ")
- 
+
     if args.port:
 		LPORT = args.port
     else:
@@ -129,7 +129,7 @@ def convert_profile():
     cp_file = commProfile.read()
     commProfile.close()
     profile = re.sub(r'(?m)^\#.*\n?', '', cp_file).strip('\n')
-    
+
     # GET request URI(s)
     uri_string = profile.split('|')[0]
     uri = uri_string.replace('\"','').replace(',','|').replace(',','|').strip('/')
@@ -146,7 +146,7 @@ def convert_profile():
     	rules = (htaccess_template_https.format(uri,user_agent,LHOST,LPORT,redirect))
     else:
     	rules = (htaccess_template.format(uri,user_agent,LHOST,LPORT,redirect))
-    
+
     print LG + '\n[!]' + W + ' mod_rewrite rules generated.'
     print rules
     return rules
@@ -172,7 +172,7 @@ def get_https_cert():
 
     # Generate HTTPS certificate
     print '\n' + T + '[*]' + W + ' Generating Let\'s Encrypt HTTPS certificate...'
-    
+
     if not args.myDomain:
         domain = raw_input(
             '\n' + G + '[+]' + W + ' Redirector domain (e.g. example.com): ')
@@ -189,21 +189,21 @@ def get_https_cert():
     if args.proceed:
         subprocess.call(['./certbot-auto', 'certonly', '--standalone', '-d', \
     	str(domain), '-d', 'www.'+str(domain), '--register-unsafely-without-email', '--agree-tos', '--non-interactive'])
-    
+
     else:
         subprocess.call(['./certbot-auto', 'certonly', '--standalone', '-d', \
     	str(domain), '-d', 'www.'+str(domain)])
-    
+
     cert_dir = '/etc/letsencrypt/live/'+str(domain)
     if not os.path.isdir(str(cert_dir)):
     	print '\n' + R + '[!]' + W + ' HTTPS certificate for ' \
-    	+ T + str(domain) + W + ' not generated.' 
+    	+ T + str(domain) + W + ' not generated.'
     	sys.exit((R + '[!]' + W + ' Exiting. HTTPS certificate' +
     		' generation failed.'))
     else:
 		print LG + '\n[!]' + W + ' HTTPS certificate for ' \
     	+ T + str(domain) + W + ' successfully generated.'
-    
+
     return domain
 
 def mod_rewrite_config(rules):
@@ -226,7 +226,7 @@ def mod_rewrite_config(rules):
 
 	# Enable mod_rewrite modules
 	subprocess.call(['a2enmod', 'rewrite', 'proxy', 'proxy_http'])
-	
+
 	# HTTPS configuration
 	f = re.split("\n", rules)
 	if 'https' in f[4]:
@@ -246,7 +246,7 @@ def mod_rewrite_config(rules):
 		ssl1 = open('/etc/apache2/sites-enabled/default-ssl.conf', 'r')
 		old_config = ssl1.read()
 		ssl1.close()
-		
+
 		ssl_settings = '''
 		SSLEngine On
 		# Enable Proxy
@@ -259,9 +259,9 @@ def mod_rewrite_config(rules):
 		ssl_on_tag = re.compile(r"SSL Engine Switch:.*?A self-signed", flags=re.DOTALL)
 		new_config = ssl_on_tag.sub(lambda match: \
 			match.group(0).replace('SSLEngine on',str(ssl_settings)) ,old_config)
-		
+
 		cert_settings = '''#   SSLCertificateFile directive is needed.
-		
+
 		# Certificate files for {}
 		#SSLCertificateFile      /etc/letsencrypt/live/{}/cert.pem
 		SSLCertificateFile      /etc/letsencrypt/live/{}/fullchain.pem
@@ -291,7 +291,7 @@ def mod_rewrite_config(rules):
 		print LG + '\n[!]' + W + ' mod_rewrite enabled.\n'
 
 def write_rules(rules):
-	
+
 	# Write rules to .htaccess
 	ruleset = str(rules).strip('\n')
 	htaccess = open('/var/www/html/.htaccess', 'w')
@@ -309,7 +309,7 @@ def write_rules(rules):
 # Main section
 if __name__ == "__main__":
 
-	print """                         
+	print """
 	                       .------.
 	    .------.           |A .   |
 	    |A_  _ |    .------; / \  |
@@ -319,13 +319,13 @@ if __name__ == "__main__":
 	    `-----+'\  / | Y  A|
 	          |  \/ A|-----'
 	          `------'
-	     ▄▄ ▝▜       ▝      ▐    ▗  
-	    ▐▘ ▘ ▐   ▄▖ ▗▄   ▄▄ ▐▗▖ ▗▟▄ 
-	    ▝▙▄  ▐  ▐▘▐  ▐  ▐▘▜ ▐▘▐  ▐  
-	      ▝▌ ▐  ▐▀▀  ▐  ▐ ▐ ▐ ▐  ▐  
-	    ▝▄▟▘ ▝▄ ▝▙▞ ▗▟▄ ▝▙▜ ▐ ▐  ▝▄ 
-	                     ▖▐         
-	                     ▝▘         
+	     ▄▄ ▝▜       ▝      ▐    ▗
+	    ▐▘ ▘ ▐   ▄▖ ▗▄   ▄▄ ▐▗▖ ▗▟▄
+	    ▝▙▄  ▐  ▐▘▐  ▐  ▐▘▜ ▐▘▐  ▐
+	      ▝▌ ▐  ▐▀▀  ▐  ▐ ▐ ▐ ▐  ▐
+	    ▝▄▟▘ ▝▄ ▝▙▞ ▗▟▄ ▝▙▜ ▐ ▐  ▝▄
+	                     ▖▐
+	                     ▝▘
 	"""
 
 	# Parse args
@@ -338,20 +338,19 @@ if __name__ == "__main__":
 
 	try:
 		rules = convert_profile()
-		
-        if args.proceed:
-            configure = args.proceed
-        else:
-            configure = raw_input(
-                (G + '[+]' + W + ' Proceed with redirector setup?' +
+		if args.proceed:
+			configure = args.proceed
+		else:
+			configure = raw_input(
+                G + '[+]' + W + ' Proceed with redirector setup?' +
                     ' [y/N] ')
-                )
-        if configure == 'y':
-            get_apache()
-            mod_rewrite_config(rules)
-            write_rules(rules)			
-        else:
-            sys.exit((R + '[!]' + W + ' Exiting. Redirector' +
+
+		if configure == 'y':
+			get_apache()
+			mod_rewrite_config(rules)
+			write_rules(rules)
+		else:
+			sys.exit((R + '[!]' + W + ' Exiting. Redirector' +
 				' not configured.'))
 
 		print LG + '[!] Setup complete!' + W
