@@ -35,7 +35,7 @@ Sleight can be used in 3 ways:
 #### 3) Rules only (no setup):
 If you only want to use Sleight to convert an Empire communication profile into mod_rewrite rules and not setup your redirector, simply feed it a communication profile and say no to the "proceed with setup" prompt.
 
-#### CLI arguments:
+#### 4) CLI arguments:
 If you want to use Sleight non interactively, command line arguments can be found in the default output. Any value not defined at launch will be prompted for during execution.
 
 ### Examples:
